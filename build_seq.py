@@ -1,6 +1,7 @@
 import os
 import operator
 import random
+import pickle
 
 path = "data\\imote-traces-cambridge\\SR-10mins-Students"
 
@@ -29,7 +30,7 @@ for i in range(1, 37):
 
 
 random.seed(0)
-contact_list = random.sample(u_meet_u, int(len(u_meet_u)/20)) # random sample one-tenth of the data
+contact_list = random.sample(u_meet_u, int(len(u_meet_u)/100)) # random sample one-tenth of the data
 contact_list.extend(u_meet_o)
 contact_list.sort(key=operator.itemgetter(0)) # sort by the meet time
 print (len(contact_list))
@@ -65,14 +66,13 @@ max_time = contact_list[-1][0]
 
 
 
-# max_user_num = 5
 user_seqs = {}
+max_user_num = 5
+
 for user in range(1,37):
     user_seqs[user] = {} # seqs for a certain users are stored in dictionary
 
 
-run_time = len(contact_list)
-count = 0
 for meet in contact_list:
     user1 = meet[1]
     user2 = meet[2]
@@ -85,7 +85,6 @@ for meet in contact_list:
         seqs_list = seqs_dict[str(user1)]
         if user2 not in seqs_list:
             seqs_list.append(user2)
-
 
     else:
     # here user1 detects user2, then the sequences of users2 are copied and add to user1
@@ -103,17 +102,21 @@ for meet in contact_list:
             new_users = str(users)+','+str(user1)
             user_seqs[user1][new_users] = objects
 
-    count = count+1
-    if (count%int(run_time/100)==0):
-        print (count/int(run_time/100))
-    if count==run_time:
-        break
 print ("Finish Generate Sequences.")
 
 seqs_count = 0
 for i in user_seqs:
     seqs_count = seqs_count + len(user_seqs[i])
-print (seqs_count)
+print ("sequence number:", seqs_count)
+
+# for i in user_seqs:
+#     print (user_seqs[i])
+
+# save user_seqs using pickle
+f = open('userSeqs.pkl', 'wb')
+pickle.dump(user_seqs, f, True)
+f.close()
+
 
 
 
