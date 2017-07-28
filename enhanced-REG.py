@@ -10,7 +10,7 @@ f.close()
 
 # total 36 users
 random.seed(0)
-upload_rate = 0.5
+upload_rate = 0.1
 uploaded_users = random.sample([i for i in range(1,37)], int(upload_rate*36))
 uploaded_users.sort()
 #print (uploaded_users)
@@ -27,7 +27,7 @@ for users, objects in seqs_dict.items():
     users_list = [int(user) for user in users.split(',')]
     seqs_list.append([users_list, objects])
 seqs_list.sort(key=operator.itemgetter(0))
-#print (seqs_list)
+print ("sequence num:", len(seqs_list))
 
 
 
@@ -135,32 +135,61 @@ for tuples in permuate:
         H2 = F
         W_H2 = W
 
+print (H2)
+print (W_H2)
+
 
 
 
 W_H1 = 0
 H1 = []
-permuate_2 = list( itertools.permutations(seqs_list,k-1) )
-for tuples in permuate_2:
-    total_cost = 0
-    total_weight = 0
-    cur_bid = bid.copy()
-    tmp_list = []
+permuate_num = k-1
+while permuate_num>=1:
+    permuate_2 = list( itertools.permutations(seqs_list,k-1) )
+    for tuples in permuate_2:
+        total_cost = 0
+        total_weight = 0
+        cur_bid = bid.copy()
+        tmp_list = []
+        covered = []
 
-    for [users, objects] in tuples:
-        tmp_list.append([users, objects])
-        for user in users:
-            total_cost = total_cost + cur_bid[user]
-            cur_bid[user] = cur_bid[user] + 1
-        for object in objects:
-            total_weight = total_weight + weight[object]
+        for [users, objects] in tuples:
+            tmp_list.append([users, objects])
+            for user in users:
+                total_cost = total_cost + cur_bid[user]
+                cur_bid[user] = cur_bid[user] + 1
+            for object in objects:
+                if object not in covered:
+                    total_weight = total_weight + weight[object]
+                    covered.append(object)
 
-    if total_cost > L:
-        continue
+        if total_cost > L:
+            continue
 
-    if total_weight > W_H1:
-        W_H1 = total_weight
-        H1 = tmp_list
+        if total_weight > W_H1:
+            W_H1 = total_weight
+            H1 = tmp_list
+
+    permuate_num = permuate_num-1
+
+
+print (H1)
+print (W_H1)
+
+
+
+# result_seqs = []
+# result_W = 0
+# if (W_H1>W_H2):
+#     result_seqs = H1
+#     result_W = W_H1
+# else:
+#     result_seqs = H2
+#     result_W = W_H2
+#
+#
+# print (result_seqs)
+# print (result_W)
 
 
 

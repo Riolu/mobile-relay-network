@@ -9,7 +9,7 @@ f.close()
 
 # total 36 users
 random.seed(0)
-upload_rate = 0.5
+upload_rate = 0.1
 uploaded_users = random.sample([i for i in range(1,37)], int(upload_rate*36))
 uploaded_users.sort()
 #print (uploaded_users)
@@ -137,18 +137,18 @@ print (max_W)
 
 
 
-result_seqs = []
-result_W = 0
-if (W>max_W):
-    result_seqs = F
-    result_W = W
-else:
-    result_seqs = max_seq
-    result_W = max_W
-
-covered.sort()
-print (covered)
-print (result_seqs)
+# result_seqs = []
+# result_W = 0
+# if (W>max_W):
+#     result_seqs = F
+#     result_W = W
+# else:
+#     result_seqs = max_seq
+#     result_W = max_W
+#
+# covered.sort()
+# print (covered)
+# print (result_seqs)
 
 
 
