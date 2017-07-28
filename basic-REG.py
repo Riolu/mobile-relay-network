@@ -9,7 +9,7 @@ f.close()
 
 # total 36 users
 random.seed(0)
-upload_rate = 0.1
+upload_rate = 0.7
 uploaded_users = random.sample([i for i in range(1,37)], int(upload_rate*36))
 uploaded_users.sort()
 #print (uploaded_users)
@@ -34,17 +34,20 @@ seqs_list.sort(key=operator.itemgetter(0))
 weight = {}
 for object in range(37,55):
     #weight[object] = random.randint(1,10)
-    weight[object] = random.gauss(5,1)
+    weight[object] = random.uniform(1,5)
 
 bid = {}
 cnt = {}
 for user in range(1,37):
-    bid[user] = random.randint(1,5)
+    bid[user] = random.uniform(2,8)#
     cnt[user] = 0
-
+bid[33]=10;
+bid[29]=10
+bid[30]=10
+bid[24]=10
 
 covered = [] # objects covered in F
-L = 500     # total budget
+L = 25     # total budget
 B = 0       # total cost of sequences in F
 F = []      # selected sequences
 W = 0       # total weight selected
@@ -146,8 +149,8 @@ print (max_W)
 #     result_seqs = max_seq
 #     result_W = max_W
 #
-# covered.sort()
-# print (covered)
+covered.sort()
+print (covered)
 # print (result_seqs)
 
 

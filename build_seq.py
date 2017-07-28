@@ -28,9 +28,16 @@ for i in range(1, 37):
         # if id<=54: # id in range [0:54] are useful
         #     contact_list.append([time, i, id])
 
+# all_objects = []
+# for [time, i, id] in u_meet_o:
+#     if id not in all_objects:
+#         all_objects.append(id)
+# all_objects.sort()
+# print (all_objects)
+
 
 random.seed(0)
-contact_list = random.sample(u_meet_u, int(len(u_meet_u)/100)) # random sample one-tenth of the data
+contact_list = random.sample(u_meet_u, int(len(u_meet_u)/200)) # random sample one-tenth of the data
 contact_list.extend(u_meet_o)
 contact_list.sort(key=operator.itemgetter(0)) # sort by the meet time
 print (len(contact_list))

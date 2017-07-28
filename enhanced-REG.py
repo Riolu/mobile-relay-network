@@ -10,7 +10,7 @@ f.close()
 
 # total 36 users
 random.seed(0)
-upload_rate = 0.1
+upload_rate = 0.7
 uploaded_users = random.sample([i for i in range(1,37)], int(upload_rate*36))
 uploaded_users.sort()
 #print (uploaded_users)
@@ -35,15 +35,19 @@ print ("sequence num:", len(seqs_list))
 weight = {}
 for object in range(37,55):
     #weight[object] = random.randint(1,10)
-    weight[object] = random.gauss(5,1)
+    weight[object] = random.uniform(1,5)
 
 bid = {}
 cnt = {}
 for user in range(1,37):
-    bid[user] = random.randint(1,5)
+    bid[user] = random.uniform(2,8)#random.gauss(5,1)
     cnt[user] = 0
+bid[33]=10;
+bid[29]=10
+bid[30]=10
+bid[24]=10
 
-L = 500     # total budget
+L = 25     # total budget
 
 
 def max_margin(covered,S,bid):
