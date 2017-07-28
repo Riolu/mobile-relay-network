@@ -33,7 +33,8 @@ seqs_list.sort(key=operator.itemgetter(0))
 # initialization for object weights and user bids
 weight = {}
 for object in range(37,55):
-    weight[object] = random.randint(1,10)
+    #weight[object] = random.randint(1,10)
+    weight[object] = random.gauss(5,1)
 
 bid = {}
 cnt = {}
@@ -47,7 +48,7 @@ L = 500     # total budget
 B = 0       # total cost of sequences in F
 F = []      # selected sequences
 W = 0       # total weight selected
-S = seqs_list
+S = seqs_list.copy()
 
 
 
@@ -135,12 +136,19 @@ print (max_seq)
 print (max_W)
 
 
-result = []
+
+result_seqs = []
+result_W = 0
 if (W>max_W):
-    result = F
+    result_seqs = F
+    result_W = W
 else:
-    result = max_seq
-print (result)
+    result_seqs = max_seq
+    result_W = max_W
+
+covered.sort()
+print (covered)
+print (result_seqs)
 
 
 
