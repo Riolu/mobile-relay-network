@@ -41,7 +41,9 @@ for user in range(1,37):
 
 
 covered = [] # objects covered in F
-F = {}
+L = 500     # total budget
+B = 0       # total cost of sequences in F
+F = []      # selected sequences
 cnt = {}
 for user in range(1,37):
     cnt[user] = 0
@@ -74,17 +76,23 @@ def max_margin():
             max_marginal = marginal_weight/total_bid
             max_seq = seq
 
-    print (max_marginal)
-    print (max_seq)
+    #print (max_marginal)
+    #print (max_seq)
+
+    return max_seq, marginal_weight, total_bid
+
+#max_margin()
+
+while len(seqs_dict)!=0:
+    max_seq, marginal_weight, total_bid = max_margin()
+    if marginal_weight == 0:
+        break
+    if B+total_bid <= L:
+        F.append(max_seq)
 
 
-max_margin()
 
 
-
-# while len(seqs_dict)!=0:
-#
-#
 
 
 
