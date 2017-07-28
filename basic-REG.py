@@ -23,9 +23,10 @@ for user in uploaded_users:
 # the reason transfer seqs_dict to seqs_list is the order is fixed in list
 seqs_list = []
 for users, objects in seqs_dict.items():
-    seqs_list.append([users, objects])
+    users_list = [int(user) for user in users.split(',')]
+    seqs_list.append([users_list, objects])
 seqs_list.sort(key=operator.itemgetter(0))
-#print (len(seqs_list))
+#print (seqs_list)
 
 
 
@@ -35,27 +36,31 @@ for object in range(37,55):
     weight[object] = random.randint(1,10)
 
 bid = {}
+cnt = {}
 for user in range(1,37):
     bid[user] = random.randint(1,5)
-
+    cnt[user] = 0
 
 
 covered = [] # objects covered in F
 L = 500     # total budget
 B = 0       # total cost of sequences in F
 F = []      # selected sequences
-cnt = {}
-for user in range(1,37):
-    cnt[user] = 0
+W = 0       # total weight selected
+S = seqs_list
+
+
 
 
 
 def max_margin():
-    max_marginal = 0
-    max_seq = []
+    max_ratio = 0
+    cur_seq = []
+    cur_weightsum = 0
+    cur_bidsum = 0
     # users and objects of a certain sequence
-    for seq in seqs_list:
-        users = seq[0]      # string
+    for seq in S:
+        users = seq[0]      # list
         objects = seq[1]    # list
         #print (users, objects)
 
@@ -66,32 +71,76 @@ def max_margin():
                 marginal_weight = marginal_weight + weight[object]
 
         # calculate costs needed paying
-        total_bid = 0
-        user_list = users.split(',')
-        for user in user_list:
-            total_bid = total_bid + bid[int(user)]
+        bidsum = 0
+        for user in users:
+            bidsum = bidsum + bid[user]
 
         #print (marginal_weight/total_bid)
-        if marginal_weight/total_bid > max_marginal:
-            max_marginal = marginal_weight/total_bid
-            max_seq = seq
+        if marginal_weight/bidsum > max_ratio:
+            max_ratio = marginal_weight/bidsum
+            cur_seq = seq
+            cur_weightsum = marginal_weight
+            cur_bidsum = bidsum
 
-    #print (max_marginal)
+    #print (max_ratio)
     #print (max_seq)
 
-    return max_seq, marginal_weight, total_bid
+    return cur_seq, cur_weightsum, cur_bidsum
 
-#max_margin()
+# max_margin()
 
-while len(seqs_dict)!=0:
-    max_seq, marginal_weight, total_bid = max_margin()
-    if marginal_weight == 0:
+
+while len(S)!=0:
+    cur_seq, cur_weightsum, cur_bidsum = max_margin()
+    if cur_weightsum == 0:
         break
-    if B+total_bid <= L:
-        F.append(max_seq)
+    if B+cur_bidsum <= L: # accept the sequence
+        F.append(cur_seq)
+        B = B + cur_bidsum
+        W = W + cur_weightsum
+        for object in cur_seq[1]:
+            if object not in covered:
+                covered.append(object)
+
+        for user in cur_seq[0]:
+            bid[user] = bid[user] + 1 # update the bids of users if they are choosen
+            cnt[user] = cnt[user] + 1
+
+    S.remove(cur_seq)
+
+print (F)
+print (W)
 
 
 
+
+max_W = 0
+max_seq = []
+for [users, objects] in seqs_list:
+    B_t = 0
+    for user in users:
+        B_t = B_t + bid[user]
+    if B_t>L:
+        continue
+
+    W_t = 0
+    for object in objects:
+        W_t = W_t + weight[object]
+
+    if W_t>max_W:
+        max_W = W_t
+        max_seq = [users, objects]
+
+print (max_seq)
+print (max_W)
+
+
+result = []
+if (W>max_W):
+    result = F
+else:
+    result = max_seq
+print (result)
 
 
 
