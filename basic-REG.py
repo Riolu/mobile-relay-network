@@ -47,7 +47,7 @@ bid[30]=10
 bid[24]=10
 
 covered = [] # objects covered in F
-L = 25     # total budget
+L = 30     # total budget
 B = 0       # total cost of sequences in F
 F = []      # selected sequences
 W = 0       # total weight selected
@@ -139,19 +139,26 @@ print (max_seq)
 print (max_W)
 
 
+print ("Final Result:")
+result_seqs = []
+result_W = 0
+if (W>max_W):
+    result_seqs = F
+    result_W = W
+else:
+    result_seqs = max_seq
+    result_W = max_W
+print (result_seqs)
+print (result_W)
 
-# result_seqs = []
-# result_W = 0
-# if (W>max_W):
-#     result_seqs = F
-#     result_W = W
-# else:
-#     result_seqs = max_seq
-#     result_W = max_W
-#
-covered.sort()
-print (covered)
-# print (result_seqs)
+covered_objects = []
+for [users, objects] in result_seqs:
+    for object in objects:
+        if object not in covered_objects:
+            covered_objects.append(object)
+covered_objects.sort()
+print (covered_objects)
+
 
 
 

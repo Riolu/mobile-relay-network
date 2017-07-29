@@ -52,13 +52,16 @@ bid[30]=10
 bid[24]=10
 
 L = 30     # total budget
-
+for object in penalty:
+    L = L - penalty[object]
+print ("new L:",L)
 
 def max_margin(covered,S,bid):
     max_ratio = 0
     cur_seq = []
     cur_weightsum = 0
     cur_bidsum = 0
+    cur_penaltysum = 0
     # users and objects of a certain sequence
     for seq in S:
         users = seq[0]      # list
@@ -67,9 +70,11 @@ def max_margin(covered,S,bid):
 
         # calculate marginal weights
         marginal_weight = 0
+        marginal_penalty = 0
         for object in objects:
             if object not in covered:
                 marginal_weight = marginal_weight + weight[object]
+                marginal_penalty = marginal_penalty + penalty[object]
 
         # calculate costs needed paying
         bidsum = 0
@@ -77,16 +82,17 @@ def max_margin(covered,S,bid):
             bidsum = bidsum + bid[user]
 
         #print (marginal_weight/total_bid)
-        if marginal_weight/bidsum > max_ratio:
-            max_ratio = marginal_weight/bidsum
+        if marginal_weight/(bidsum-marginal_penalty) > max_ratio:
+            max_ratio = marginal_weight/(bidsum-marginal_penalty)
             cur_seq = seq
             cur_weightsum = marginal_weight
             cur_bidsum = bidsum
+            cur_penaltysum = marginal_penalty
 
     #print (max_ratio)
     #print (max_seq)
 
-    return cur_seq, cur_weightsum, cur_bidsum
+    return cur_seq, cur_weightsum, cur_bidsum, cur_penaltysum
 
 # max_margin()
 
@@ -99,6 +105,7 @@ for tuples in permuate:
     F = []  # selected sequences
     B = 0  # total cost of sequences in F
     W = 0  # total weight selected
+    P = 0  # total penalty covered by F
     covered = []  # objects covered in F
     S = seqs_list.copy()
     cur_bid = bid.copy()
@@ -112,23 +119,25 @@ for tuples in permuate:
         for object in objects:
             if object not in covered:
                 W = W + weight[object]
+                P = P + penalty[object]
                 covered.append(object)
         S.remove([users, objects])
         for user in users:
             cur_bid[user] = cur_bid[user] + 1
             cur_cnt[user] = cur_bid[user] + 1
 
-    if B>L:
+    if B-P>L:
         continue
 
     while len(S)!=0:
-        cur_seq, cur_weightsum, cur_bidsum = max_margin(covered,S,cur_bid)
+        cur_seq, cur_weightsum, cur_bidsum, cur_penaltysum = max_margin(covered,S,cur_bid)
         if cur_weightsum == 0:
             break
-        if B+cur_bidsum <= L: # accept the sequence
+        if B-P+cur_bidsum-cur_penaltysum <= L: # accept the sequence
             F.append(cur_seq)
             B = B + cur_bidsum
             W = W + cur_weightsum
+            P = P + cur_penaltysum
             for object in cur_seq[1]:
                 if object not in covered:
                     covered.append(object)
@@ -157,6 +166,7 @@ while permuate_num>=1:
     for tuples in permuate_2:
         total_cost = 0
         total_weight = 0
+        total_penalty = 0
         cur_bid = bid.copy()
         tmp_list = []
         covered = []
@@ -169,9 +179,10 @@ while permuate_num>=1:
             for object in objects:
                 if object not in covered:
                     total_weight = total_weight + weight[object]
+                    total_penalty = total_penalty + penalty[object]
                     covered.append(object)
 
-        if total_cost > L:
+        if total_cost - total_penalty > L:
             continue
 
         if total_weight > W_H1:
@@ -183,6 +194,7 @@ while permuate_num>=1:
 
 print (H1)
 print (W_H1)
+
 
 
 print ("Final Result:")
@@ -208,6 +220,8 @@ print (covered_objects)
 covered_P = sum([penalty[object] for object in covered_objects])
 Penalty = sum(penalty.values()) - covered_P
 print ("Penalty:", Penalty)
+
+
 
 
 
