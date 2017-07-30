@@ -141,8 +141,7 @@ def baseline(L):
     bid[24]=10
 
     for user in range(1,37):
-        bid[user] = bid[user]*appear[user]
-
+        bid[user] = int(bid[user]*appear[user]/1) #divide for picture 1
     covered = [] # objects covered in F
     # L = 25     # total budget
     B = 0       # total cost of sequences in F
@@ -215,9 +214,9 @@ def baseline(L):
 
 
 if __name__ == "__main__":
-    L = 30
-    res = baseline(L)
-    print (res)
+    # L = 30
+    # res = baseline(L)
+    # print (res)
 
-    # for i in range(10,50):
-    #     print (i, baseline(i))
+    for i in range(20,50):
+        print (i, baseline(i))
