@@ -186,7 +186,7 @@ def enhanced(L):
     #print (W_H1)
 
 
-    print ("Final Result:")
+    #print ("Final Result:")
     result_seqs = []
     result_W = 0
     if (W_H1>W_H2):
