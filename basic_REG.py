@@ -1,7 +1,6 @@
-import os
-import operator
-import random
 import pickle
+import random
+import operator
 
 
 def max_margin(S, covered, bid, weight):
@@ -40,8 +39,7 @@ def max_margin(S, covered, bid, weight):
 
 
 
-
-def baseline(L):
+def basic(L):
     # load pickle
     f = open('userSeqs.pkl', 'rb')
     user_seqs = pickle.load(f)
@@ -60,66 +58,12 @@ def baseline(L):
         seqs_dict.update(user_seqs[user])
     #print (len(seqs_dict))
 
-
-    # count the times a certain user appears in all sequences
-    #seqs_list = []
-    appear = {}
-    for user in range(1,37):
-        appear[user] = 0
+    # the reason transfer seqs_dict to seqs_list is the order is fixed in list
+    seqs_list = []
     for users, objects in seqs_dict.items():
         users_list = [int(user) for user in users.split(',')]
-        for user in users_list:
-            appear[user] = appear[user] + 1
-        #seqs_list.append([users_list, objects])
-    #seqs_list.sort(key=operator.itemgetter(0))
-    #print(seqs_list)
-    #print (appear)
-
-    #===========================================above are used to calculate the dict appear.===================================
-
-
-    path = "data\\imote-traces-cambridge\\SR-10mins-Students"
-
-    contact_list = [] # the contents are in the form [meet_time, user1, user2], where user1 meets user2.
-    u_meet_o = [] # user meets an object
-
-    # ID [1:36] are users; [37:54] are locations
-    for i in range(1, 37):
-        filename = str(i)+".dat"
-        filename = os.path.join(path, filename)
-
-        list = []
-        file = open(filename)
-        for line in file:
-            data_split = line.split()
-            id = int(data_split[0])
-            time = int(data_split[1])
-            if id>36 and id<=54:
-                u_meet_o.append([time, i, id])
-
-
-    contact_list.extend(u_meet_o)
-    contact_list.sort(key=operator.itemgetter(0)) # sort by the meet time
-    #print (contact_list)
-
-
-
-    user_seqs = {}
-    for user in range(1,37):
-        user_seqs[user] = [] # record objects this user visited
-
-    for [time, user, object] in contact_list:
-        if object not in user_seqs[user]:
-            user_seqs[user].append(object)
-
-    # for user in user_seqs:
-    #     print (user_seqs[user])
-    # print ("===========================")
-
-    seqs_list = []
-    for user in uploaded_users:
-        if len(user_seqs[user])!=0:
-            seqs_list.append([[user],user_seqs[user]])
+        seqs_list.append([users_list, objects])
+    seqs_list.sort(key=operator.itemgetter(0))
     #print (seqs_list)
 
 
@@ -140,20 +84,16 @@ def baseline(L):
     bid[30]=10
     bid[24]=10
 
-    for user in range(1,37):
-        bid[user] = bid[user]*appear[user]
-
     covered = [] # objects covered in F
-    # L = 25     # total budget
+    #L = 30     # total budget
     B = 0       # total cost of sequences in F
     F = []      # selected sequences
     W = 0       # total weight selected
     S = seqs_list.copy()
 
 
-
     while len(S)!=0:
-        cur_seq, cur_weightsum, cur_bidsum = max_margin(S,covered,bid,weight)
+        cur_seq, cur_weightsum, cur_bidsum = max_margin(S, covered, bid, weight)
         if cur_weightsum == 0:
             break
         if B+cur_bidsum <= L: # accept the sequence
@@ -172,6 +112,8 @@ def baseline(L):
 
     #print (F)
     #print (W)
+
+
 
 
     max_W = 0
@@ -194,30 +136,38 @@ def baseline(L):
     #print (max_seq)
     #print (max_W)
 
-    #print("Final Result:")
+
+    #print ("Final Result:")
     result_seqs = []
     result_W = 0
-    if (W > max_W):
+    if (W>max_W):
         result_seqs = F
         result_W = W
     else:
         result_seqs = max_seq
         result_W = max_W
-    #print(result_seqs)
-    #print(result_W)
+    #print (result_seqs)
+    #print (result_W)
+
+    covered_objects = []
+    for [users, objects] in result_seqs:
+        for object in objects:
+            if object not in covered_objects:
+                covered_objects.append(object)
+    covered_objects.sort()
+    #print (covered_objects)
 
     return result_W
 
 
 
 
-
-
-
 if __name__ == "__main__":
     L = 30
-    res = baseline(L)
+    res = basic(L)
     print (res)
 
-    # for i in range(10,50):
-    #     print (i, baseline(i))
+    # for i in range(20,50):
+    #     print (i, basic(i))
+
+
